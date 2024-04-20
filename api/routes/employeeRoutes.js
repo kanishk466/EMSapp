@@ -4,18 +4,35 @@ import {
     getAllEmployee,
     updateEmployee,
     deleteEmployee,
-    getEmployeeById
+    getEmployeeById,
+   
+  
 } from "../controllers/employeeController.js";
 
-import {verifyAdmin} from "../utils/verifyToken.js"
+import{authorizeManager,authorizeEmployee,verifyToken} from "../utils/verifyToken.js"
 const router = express.Router();
 
 //CREATE
-router.post("/", verifyAdmin,  createEmployee);
-router.get("/",verifyAdmin,getAllEmployee)
+router.post("/", authorizeManager,  createEmployee);
+
+//Get  all employees
+router.get("/",authorizeEmployee,getAllEmployee)
+
+
+
 router.put('/:id',updateEmployee)
-router.delete("/:id",verifyAdmin, deleteEmployee)
+router.delete("/:id", deleteEmployee)
 // @desc Get employee by ID
 router.get("/:id",getEmployeeById)
+
+
+
+
+
+
+
+
+
+
 
 export default router

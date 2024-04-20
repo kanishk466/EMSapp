@@ -14,22 +14,50 @@ export const verifyToken = (req, res, next) => {
   });
 };
 
-export const verifyUser = (req, res, next) => {
-  verifyToken(req, res, next, () => {
-    if (req.user.id === req.params.id || req.user.isAdmin) {
-      next();
+
+
+
+
+// Middleware to authorize employee routes
+export const authorizeEmployee = (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return next(createError(401, "You are not authenticated!"));
+  }
+
+  jwt.verify(token, process.env.JWT, (err, decodedToken) => {
+    if (err) {
+      return next(createError(403, "Token is not valid!"));
+    }
+
+    // Check if user role is employee
+    if (decodedToken.roles.includes('employee')) {
+      return next(); // User has employee role, proceed to next middleware
     } else {
-      return next(createError(403, "You are not authorized!"));
+      return next(createError(403, "You are not authorized to access this resource as an employee!"));
     }
   });
 };
 
-export const verifyAdmin = (req, res, next) => {
-  verifyToken(req, res, next, () => {
-    if (req.user.isAdmin) {
-      next();
+// Middleware to authorize manager routes
+export const authorizeManager = (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return next(createError(401, "You are not authenticated!"));
+  }
+
+  jwt.verify(token, process.env.JWT, (err, decodedToken) => {
+    if (err) {
+      return next(createError(403, "Token is not valid!"));
+    }
+
+    // Check if user role is manager
+    if (decodedToken.roles.includes('manager')) {
+      return next(); // User has manager role, proceed to next middleware
     } else {
-      return next(createError(403, "You are not authorized!"));
+      return next(createError(403, "You are not authorized to access this resource as a manager!"));
     }
   });
 };
+
+

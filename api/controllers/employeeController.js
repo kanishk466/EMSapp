@@ -1,5 +1,5 @@
 import Employee from "../models/Employee.js"
-
+import User from "../models/User.js"
 export const createEmployee = async (req, res, next) => {
   const newEmployee = new Employee(req.body);
 
@@ -56,5 +56,7 @@ export const deleteEmployee = async (req, res, next) => {
 }
 
 
+
+// Controller function to get currently logged-in user's employee information
 
 
